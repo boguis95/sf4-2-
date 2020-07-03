@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Form\CategoryFormType;
+use App\Form\ConfirmDeletionFormType;
 use App\Repository\CategoryRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Doctrine\ORM\EntityManagerInterface;
@@ -67,6 +68,28 @@ class AdminCategoryController extends AbstractController
         return $this->render('admin_category/edit.html.twig', [
             'category' => $category,
             'category_form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/delete", name="delete")
+     */
+    public function delete(Category $category, Request $request, EntityManagerInterface $entityManager)
+    {
+        $form = $this->createForm(ConfirmDeletionFormType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->remove($category);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'La catégorie a été supprimé.');
+            return $this->redirectToRoute('admin_category_list');
+        }
+
+        return $this->render('admin_category/delete.html.twig', [
+            'category' => $category,
+            'deletion_form' => $form->createView()
         ]);
     }
 }
