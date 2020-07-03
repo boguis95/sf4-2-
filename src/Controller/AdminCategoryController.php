@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Form\CategoryFormType;
 use App\Repository\CategoryRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -46,6 +47,25 @@ class AdminCategoryController extends AbstractController
         }
 
         return $this->render('admin_category/add.html.twig', [
+            'category_form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/edit", name="edit")
+     */
+    public function edit(Category $category, Request $request, EntityManagerInterface $entityManager)
+    {
+        $form = $this->createForm(CategoryFormType::class, $category);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+            $this->addFlash('success', 'Catégorie enregistrée.');
+        }
+
+        return $this->render('admin_category/edit.html.twig', [
+            'category' => $category,
             'category_form' => $form->createView()
         ]);
     }

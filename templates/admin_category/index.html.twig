@@ -35,7 +35,7 @@
                     <td>{{ category.products|length }}</td>
                     <td>
                         <div class="buttons">
-                            <a href="#" class="button is-success">Modifier</a>
+                            <a href="{{ path('admin_category_edit', {id: category.id}) }}" class="button is-success">Modifier</a>
                             <a href="#" class="button is-danger">Supprimer</a>
                         </div>
                     </td>
